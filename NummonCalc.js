@@ -692,16 +692,16 @@ dojo.declare("classes.managers.NummonStatsManager", com.nuclearunicorn.core.TabM
     },
 
     getApocryphaProgress: function(){
-        var tier = this.game.religion.transcendenceTier + 1;
-        var tt = this.game.religion._getTranscendTotalPrice(tier) - game.religion._getTranscendTotalPrice(tier - 1);
-        var obelisk = this.game.religion.getTU("blackObelisk").val;
-		var obeliskRatio = (tier *5 * obelisk +1000) / (this.game.religion.transcendenceTier * 5 * obelisk +1000);
-		var adoreIncreaceRatio = Math.pow((tier + 1) / (tier), 2);
+        var tier = this.game.religion.transcendenceTier + 1;//超越等级+1
+        var tt = this.game.religion._getTranscendTotalPrice(tier) - game.religion._getTranscendTotalPrice(tier - 1);//下一级超越等级所需要的的顿悟量
+        var obelisk = this.game.religion.getTU("blackObelisk").val;//尖碑数量
+		var obeliskRatio = (tier *5 * obelisk +1000) / (this.game.religion.transcendenceTier * 5 * obelisk +1000);//尖碑带来的系数
+		var adoreIncreaceRatio = Math.pow((tier + 1) / (tier), 2);//超越等级提升带来的系数
             var needbaifenbi = adoreIncreaceRatio * obeliskRatio;
             var x = tt;
             var k = needbaifenbi;
-        var epiphanyRecommend = (1-k+Math.sqrt(80*(k*k-1)*x+(k-1)*(k-1)))*k/(40*(k+1)*(k+1)*(k-1))+x+x/(k*k-1);
-		var baifenbi = epiphanyRecommend / tt * 100;
+        var epiphanyRecommend = (1-k+Math.sqrt(80*(k*k-1)*x+(k-1)*(k-1)))*k/(40*(k+1)*(k+1)*(k-1))+x+x/(k*k-1);//推荐下一超越等级的顿悟量
+		var baifenbi = epiphanyRecommend / tt * 100;//转化成百分比形式
 		baifenbi = Math.round(baifenbi * 1000) / 1000;
         return baifenbi + "%";
     },
