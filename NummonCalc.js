@@ -55,6 +55,7 @@ dojo.declare("classes.managers.NummonStatsManager", com.nuclearunicorn.core.TabM
             "getDarkFutureYears": "Years until Dark Future",
             "getGflops": "GFlops",
             "getAIlv15Time": "Time until AI level 15",
+            "getamsx": "Recommend blackPyramid/blackCore",
 
             "best.none": "No Building",
             "infinity": "Infinity",
@@ -112,6 +113,7 @@ dojo.declare("classes.managers.NummonStatsManager", com.nuclearunicorn.core.TabM
             "getDarkFutureYears": "距离黑暗未来到来年份",
             "getGflops": "GFlops",
             "getAIlv15Time": "天网觉醒倒计时",
+            "getamsx": "获取遗物最佳建筑",
 
             "best.none": "无",
             "infinity": "∞",
@@ -833,7 +835,45 @@ dojo.declare("classes.managers.NummonStatsManager", com.nuclearunicorn.core.TabM
     getGflops: function(){
         return game.resPool.get("gflops").value;
     },
-
+	
+    getamsx: function() {
+        if (!this.game.religion.getZU("blackPyramid").val) {
+            return this.i18n("$religion.zu.blackPyramid.label");
+        }
+        if (this.game.tabs[5].zgUpgradeButtons.length == 0) {
+            this.game.tabs[5].render();
+        }
+        var next;
+        var cs = Math.floor(Math.log((12 + this.game.religion.getTU("blackCore").val) / 5) / Math.log(1.15)) + 1;
+        var cs1 = 0;
+        var cs2 = Math.ceil(this.game.tabs[5].zgUpgradeButtons[9].model.prices[2].val) - this.game.resPool.get("sorrow").maxValue;
+        // 黑色连结价格
+        var bnexus = this.game.tabs[5].ctPanel.children[0].children[1].model.prices[0].val;
+        // 黑色核心价格
+        var bcore = this.game.tabs[5].ctPanel.children[0].children[2].model.prices[0].val;
+        // 下一个黑金字塔需要圣遗物数量
+        var a = (Math.pow(1.15, cs2) - 1) / 0.15 * bcore;
+        // 黑色连结提升产量
+        var bnexusup = 0.001 * cs / bnexus;
+        // 黑色核心提升产量
+        var bcoreup = 0.001 * this.game.religion.getTU("blackNexus").val / a;
+        if (cs2 > 0 && bnexusup >= bcoreup) {
+            while (bnexusup >= bcoreup && bnexus < Number.MAX_VALUE / 1.15) {
+                bnexus *= 1.15;
+                bnexusup = 0.001 * cs / bnexus;
+                bcoreup += 0.001 / a;
+                cs1++;
+            }
+            next = this.i18n("$religion.tu.blackNexus.label") + cs1;
+        } else {
+            next = this.i18n("$religion.tu.blackCore.label") + cs2;
+            if (cs2 < 1) {
+                next = this.i18n("$religion.zu.blackPyramid.label");
+            }
+        }
+        return next;
+    },
+  
     getAIlv15Time: function(){
         var lv15Gflops = Math.exp(14.5);
         var gflopsHave = this.game.resPool.get("gflops").value;
@@ -845,6 +885,7 @@ dojo.declare("classes.managers.NummonStatsManager", com.nuclearunicorn.core.TabM
         else
             return this.i18n("infinity");
     },
+  
     
     //==============================================================================================================================================
     //Finally done with calculation functions, now to get down to adding it to the stats tab
@@ -989,6 +1030,11 @@ dojo.declare("classes.managers.NummonStatsManager", com.nuclearunicorn.core.TabM
             {
                 name: "getDarkFutureYears",
                 // title: "Years untile Dark Future",
+                val: 0,
+            },
+            {
+                name: "getamsx",
+                //title: "Besting building for increase relic",
                 val: 0,
             },
             {
