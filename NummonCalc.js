@@ -91,7 +91,7 @@ dojo.declare("classes.managers.NummonStatsManager", com.nuclearunicorn.core.TabM
             "religion": "宗教",
 
             "getReligionProductionBonusCap": "太阳革命极限加成",
-            "getApocryphaProgress": "新约外传进度",
+            "getApocryphaProgress": "推荐下一超越的进度",
             "getNextTranscendTierProgress": "到达下一超越等级的进度",
 
             "paragon": "领导力加成",
@@ -694,10 +694,16 @@ dojo.declare("classes.managers.NummonStatsManager", com.nuclearunicorn.core.TabM
     getApocryphaProgress: function(){
         var tier = this.game.religion.transcendenceTier + 1;
         var tt = this.game.religion._getTranscendTotalPrice(tier) - game.religion._getTranscendTotalPrice(tier - 1);
-        var worship = this.game.religion.faith / 1000000 * tier * tier * 1.01;
-        var perc = worship / tt * 100;
-        perc = Math.round(perc * 1000) / 1000;
-        return perc + "%";
+        var obelisk = this.game.religion.getTU("blackObelisk").val;
+		var obeliskRatio = (tier *5 * obelisk +1000) / (this.game.religion.transcendenceTier * 5 * obelisk +1000);
+		var adoreIncreaceRatio = Math.pow((tier + 1) / (tier), 2);
+            var needbaifenbi = adoreIncreaceRatio * obeliskRatio;
+            var x = tt;
+            var k = needbaifenbi;
+        var epiphanyRecommend = (1-k+Math.sqrt(80*(k*k-1)*x+(k-1)*(k-1)))*k/(40*(k+1)*(k+1)*(k-1))+x+x/(k*k-1);
+		var baifenbi = epiphanyRecommend / tt * 100;
+		baifenbi = Math.round(baifenbi * 1000) / 1000;
+        return baifenbi + "%";
     },
 
     getNextTranscendTierProgress: function(){
