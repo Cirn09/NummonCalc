@@ -91,7 +91,7 @@ dojo.declare("classes.managers.NummonStatsManager", com.nuclearunicorn.core.TabM
             "religion": "宗教",
 
             "getReligionProductionBonusCap": "太阳革命极限加成",
-            "getApocryphaProgress": "推荐下一超越的进度",
+            "getApocryphaProgress": "推荐下一超越等级的进度",
             "getNextTranscendTierProgress": "到达下一超越等级的进度",
 
             "paragon": "领导力加成",
