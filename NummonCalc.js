@@ -280,7 +280,7 @@ dojo.declare("classes.managers.NummonStatsManager", com.nuclearunicorn.core.TabM
 
     getTitPerZebraTrade: function(){
         var shipAmount = this.game.resPool.get("ship").value;
-        var zebraRelationModifierTitanium = this.game.getEffect("zebraRelationModifier") * 0.0015;
+        var zebraRelationModifierTitanium = this.game.getEffect("zebraRelationModifier") * 0.015;
         titaniumPerTrade = (1.5 + shipAmount * 0.03) * (1 + zebraRelationModifierTitanium);
         return titaniumPerTrade;
     },
