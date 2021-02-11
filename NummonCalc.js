@@ -33,7 +33,7 @@ dojo.declare("classes.managers.NummonStatsManager", com.nuclearunicorn.core.TabM
 
             "religion": "Religion",
 
-            "getReligionProductionBonusCap": "Solar Revolution Limit",
+            "getReligionProductionBonusCap": "Solar Revolution Limit (%)",
             "getNextTranscendTierProgress": "Progress to Next Transcendence Tier",
             "getApocryphaProgress": "Rec.Progress to Transcend Tier Progress",
             
@@ -92,7 +92,7 @@ dojo.declare("classes.managers.NummonStatsManager", com.nuclearunicorn.core.TabM
 
             "religion": "宗教",
 
-            "getReligionProductionBonusCap": "太阳革命极限加成",
+            "getReligionProductionBonusCap": "太阳革命极限加成(%)",
             "getNextTranscendTierProgress": "到达下一超越等级的进度",
             "getApocryphaProgress": "推荐下一超越等级的进度",
 
@@ -184,21 +184,22 @@ dojo.declare("classes.managers.NummonStatsManager", com.nuclearunicorn.core.TabM
                 if (game.calendar.cycle === 2) {hydroponics *= 2;}
                 if (game.calendar.cycle === 7) {hydroponics *= 0.5;}
             }
-			var aqueduct = game.bld.meta[0].meta[2].val
+            var aqueduct = (game.bld.getBuildingExt('aqueduct').meta.stage === 0) ? game.bld.getBuildingExt('aqueduct').meta.val : 0;
             baseProd *= 1 + 0.03 * aqueduct + 0.025 * hydroponics;
 
             var paragonBonus = (game.challenges.currentChallenge == "winterIsComing") ? 0 : game.prestige.getParagonProductionRatio();
             baseProd *= 1 + paragonBonus;
 
             baseProd *= 1 + game.religion.getSolarRevolutionRatio();
-
+            
             if (!game.opts.disableCMBR) {baseProd *= (1 + game.getCMBRBonus());}
 
             baseProd = game.calendar.cycleEffectsFestival({catnip: baseProd})['catnip'];
+            baseProd *= 1 + (this.game.getEffect("blsProductionBonus") * this.game.resPool.get("sorrow").value);
 
             var baseDemand = game.village.getResConsumption()['catnip'];
             var uniPastures = game.bld.getBuildingExt('unicornPasture').meta.val;
-			var pasture = game.bld.meta[0].meta[1].val;
+            var pasture = (game.bld.getBuildingExt('pasture').meta.stage === 0) ? game.bld.getBuildingExt('pasture').meta.val : 0;
             baseDemand *= 1 + (game.getLimitedDR(pasture * -0.005 + uniPastures * -0.0015, 1.0));
             if (game.village.sim.kittens.length > 0 && game.village.happiness > 1) {
                 var happyCon = Math.max(game.village.happiness - 1);
@@ -211,12 +212,12 @@ dojo.declare("classes.managers.NummonStatsManager", com.nuclearunicorn.core.TabM
             baseProd += baseDemand;
 
             baseProd += game.getResourcePerTickConvertion('catnip');
-			baseProd *= 5 * (1 + game.timeAccelerationRatio());
-			return baseProd;
+            baseProd *= 5 * (1 + game.timeAccelerationRatio());
+            return baseProd;
         },
     
     getCatnipColdWinter: function(){
-		if (game.science.meta[1].meta[7].researched ==false ) {
+        if (game.science.meta[1].meta[7].researched ==false ) {
           var catnip = this.getPotentialCatnip(0.1);
        } else {
           var catnip = this.getPotentialCatnip(0);
@@ -461,12 +462,15 @@ dojo.declare("classes.managers.NummonStatsManager", com.nuclearunicorn.core.TabM
 
     getReligionProductionBonusCap: function(){
         var transcendTier = this.game.religion.transcendenceTier;
-        var numObelisks = this.game.religion.getTU("blackObelisk").val;
-        var atheismBonus = 0;
-        if((this.game.challenges.getChallenge("atheism").researched))
-            atheismBonus = this.game.religion.transcendenceTier * 0.1;
-        var result = 1000 * (transcendTier * numObelisks * .005 + atheismBonus + 1);
-        return this.roundThisNumber(result) + "%";
+        var firstAtheismBonus = 0;
+        var atheismBonus = 1;
+        if(this.game.challenges.getChallenge("atheism").researched) {
+            atheismBonus += this.game.getLimitedDR(this.game.getEffect("faithSolarRevolutionBoost"), 4);
+            firstAtheismBonus += 20;
+            }
+        var numObelisks = this.game.religion.getTU("blackObelisk").val + firstAtheismBonus;
+        var result = ((transcendTier * numObelisks * 5) + 1000) * atheismBonus;
+        return result;
     },
 
     getApocryphaProgress: function() {
@@ -554,7 +558,7 @@ dojo.declare("classes.managers.NummonStatsManager", com.nuclearunicorn.core.TabM
             return TCBack; 
         } else {
             return this.i18n("best.none");
-            }
+        }
     },
     // OTHERS : 
 
