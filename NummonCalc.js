@@ -643,6 +643,9 @@ dojo.declare("classes.managers.NummonStatsManager", com.nuclearunicorn.core.TabM
     },
 
     getAIlv15Time: function(){
+        if (game.science.meta[1].meta[12].researched) {
+            return this.i18n("best.none");
+        }
         var lv15Gflops = Math.exp(14.5);
         var gflopsHave = this.game.resPool.get("gflops").value;
         var gflopsproduction = this.game.getEffect("gflopsPerTickBase") - this.game.getEffect("gflopsConsumption");
@@ -656,12 +659,12 @@ dojo.declare("classes.managers.NummonStatsManager", com.nuclearunicorn.core.TabM
     
     getfutureSeason: function(){
         if (this.game.bld.get("chronosphere").on == 0) {
-        return  this.i18n("best.none");
-        } else if (game.calendar.futureSeasonTemporalParadox == -1) { 
+            return this.i18n("best.none");
+        } else if (game.calendar.futureSeasonTemporalParadox == -1) {
             var time = 1;
-            } else {
+        } else {
             var time = game.calendar.futureSeasonTemporalParadox + 1;
-            }
+        }
         return time;
     },
     
