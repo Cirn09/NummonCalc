@@ -560,7 +560,7 @@ dojo.declare("classes.managers.NummonStatsManager", com.nuclearunicorn.core.TabM
             return this.i18n("best.none");
         var cost = this.game.tabs[7].cfPanel.children[0].children[6].model.prices[0].val; //下个资源回复所需要的的水晶
         var number = this.game.tabs[7].cfPanel.children[0].children[6].model.on; //点下个资源回复收益
-        if (timeC > 0 && number > 0) {
+        if (timeC > 0 && number > 0 && number < 100) {
             TCBack = Math.ceil(cost * number / result)
             return TCBack; 
         } else {
